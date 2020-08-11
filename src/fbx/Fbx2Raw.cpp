@@ -1135,7 +1135,7 @@ bool LoadFBXFile(
   FindFbxTextures(pScene, fbxFileName, textureExtensions, textureLocations);
 
   // Use Y up for glTF
-  FbxAxisSystem::MayaYUp.ConvertScene(pScene);
+  FbxAxisSystem::MayaZUp.ConvertScene(pScene);
 
   // FBX's internal unscaled unit is centimetres, and if you choose not to work in that unit,
   // you will find scaling transforms on all the children of the root node. Those transforms are

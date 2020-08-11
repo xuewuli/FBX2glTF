@@ -687,74 +687,74 @@ ModelData* Raw2Gltf(
     // cameras
     //
 
-    for (int i = 0; i < raw.GetCameraCount(); i++) {
-      const RawCamera& cam = raw.GetCamera(i);
-      CameraData& camera = *gltf->cameras.hold(new CameraData());
-      camera.name = cam.name;
+    // for (int i = 0; i < raw.GetCameraCount(); i++) {
+    //   const RawCamera& cam = raw.GetCamera(i);
+    //   CameraData& camera = *gltf->cameras.hold(new CameraData());
+    //   camera.name = cam.name;
 
-      if (cam.mode == RawCamera::CAMERA_MODE_PERSPECTIVE) {
-        camera.type = "perspective";
-        camera.aspectRatio = cam.perspective.aspectRatio;
-        camera.yfov = cam.perspective.fovDegreesY * ((float)M_PI / 180.0f);
-        camera.znear = cam.perspective.nearZ;
-        camera.zfar = cam.perspective.farZ;
-      } else {
-        camera.type = "orthographic";
-        camera.xmag = cam.orthographic.magX;
-        camera.ymag = cam.orthographic.magY;
-        camera.znear = cam.orthographic.nearZ;
-        camera.zfar = cam.orthographic.farZ;
-      }
-      // Add the camera to the node hierarchy.
+    //   if (cam.mode == RawCamera::CAMERA_MODE_PERSPECTIVE) {
+    //     camera.type = "perspective";
+    //     camera.aspectRatio = cam.perspective.aspectRatio;
+    //     camera.yfov = cam.perspective.fovDegreesY * ((float)M_PI / 180.0f);
+    //     camera.znear = cam.perspective.nearZ;
+    //     camera.zfar = cam.perspective.farZ;
+    //   } else {
+    //     camera.type = "orthographic";
+    //     camera.xmag = cam.orthographic.magX;
+    //     camera.ymag = cam.orthographic.magY;
+    //     camera.znear = cam.orthographic.nearZ;
+    //     camera.zfar = cam.orthographic.farZ;
+    //   }
+    //   // Add the camera to the node hierarchy.
 
-      auto iter = nodesById.find(cam.nodeId);
-      if (iter == nodesById.end()) {
-        fmt::printf("Warning: Camera node id %lu does not exist.\n", cam.nodeId);
-        continue;
-      }
-      iter->second->SetCamera(camera.ix);
-    }
+    //   auto iter = nodesById.find(cam.nodeId);
+    //   if (iter == nodesById.end()) {
+    //     fmt::printf("Warning: Camera node id %lu does not exist.\n", cam.nodeId);
+    //     continue;
+    //   }
+    //   iter->second->SetCamera(camera.ix);
+    // }
 
     //
     // lights
     //
-    std::vector<json> khrPunctualLights;
-    if (options.useKHRLightsPunctual) {
-      for (int i = 0; i < raw.GetLightCount(); i++) {
-        const RawLight& light = raw.GetLight(i);
-        LightData::Type type;
-        switch (light.type) {
-          case RAW_LIGHT_TYPE_DIRECTIONAL:
-            type = LightData::Type::Directional;
-            break;
-          case RAW_LIGHT_TYPE_POINT:
-            type = LightData::Type::Point;
-            break;
-          case RAW_LIGHT_TYPE_SPOT:
-            type = LightData::Type::Spot;
-            break;
-        }
-        const auto _ = gltf->lights.hold(new LightData(
-            light.name,
-            type,
-            light.color,
-            // FBX intensity defaults to 100, so let's call that 1.0;
-            // but caveat: I find nothing in the documentation to suggest
-            // what unit the FBX value is meant to be measured in...
-            light.intensity / 100,
-            light.innerConeAngle,
-            light.outerConeAngle));
-      }
-      for (int i = 0; i < raw.GetNodeCount(); i++) {
-        const RawNode& node = raw.GetNode(i);
-        const auto nodeData = gltf->nodes.ptrs[i];
+    // std::vector<json> khrPunctualLights;
+    // if (options.useKHRLightsPunctual) {
+    //   for (int i = 0; i < raw.GetLightCount(); i++) {
+    //     const RawLight& light = raw.GetLight(i);
+    //     LightData::Type type;
+    //     switch (light.type) {
+    //       case RAW_LIGHT_TYPE_DIRECTIONAL:
+    //         type = LightData::Type::Directional;
+    //         break;
+    //       case RAW_LIGHT_TYPE_POINT:
+    //         type = LightData::Type::Point;
+    //         break;
+    //       case RAW_LIGHT_TYPE_SPOT:
+    //         type = LightData::Type::Spot;
+    //         break;
+    //     }
+    //     const auto _ = gltf->lights.hold(new LightData(
+    //         light.name,
+    //         type,
+    //         light.color,
+    //         // FBX intensity defaults to 100, so let's call that 1.0;
+    //         // but caveat: I find nothing in the documentation to suggest
+    //         // what unit the FBX value is meant to be measured in...
+    //         light.intensity / 100,
+    //         light.innerConeAngle,
+    //         light.outerConeAngle));
+    //   }
+    //   for (int i = 0; i < raw.GetNodeCount(); i++) {
+    //     const RawNode& node = raw.GetNode(i);
+    //     const auto nodeData = gltf->nodes.ptrs[i];
 
-        if (node.lightIx >= 0) {
-          // we lean on the fact that in this simple case, raw and gltf indexing are aligned
-          nodeData->SetLight(node.lightIx);
-        }
-      }
-    }
+    //     if (node.lightIx >= 0) {
+    //       // we lean on the fact that in this simple case, raw and gltf indexing are aligned
+    //       nodeData->SetLight(node.lightIx);
+    //     }
+    //   }
+    // }
   }
 
   NodeData& rootNode = require(nodesById, raw.GetRootNode());
